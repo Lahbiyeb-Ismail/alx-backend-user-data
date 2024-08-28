@@ -165,10 +165,11 @@ class RedactingFormatter(logging.Formatter):
         """
         Formats the log record message by filtering sensitive data.
         """
-        record.msg = filter_datum(
-            self.fields, self.REDACTION, record.msg, self.SEPARATOR
+        message = super(RedactingFormatter, self).format(record)
+        formated_msg = filter_datum(
+            self.fields, self.REDACTION, message, self.SEPARATOR
         )
-        return super(RedactingFormatter, self).format(record)
+        return formated_msg
 
 
 if __name__ == "__main__":
