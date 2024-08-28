@@ -6,8 +6,8 @@
 """
 
 import logging
+import os
 import re
-from os import environ
 from typing import List
 
 import mysql.connector
@@ -93,10 +93,10 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         A connection to the personal data database.
     """
 
-    user = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
-    password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
-    host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
-    database = environ.get("PERSONAL_DATA_DB_NAME")
+    user = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    database = os.getenv("PERSONAL_DATA_DB_NAME")
 
     conn = mysql.connector.connection.MySQLConnection(
         user=user, password=password, host=host, database=database
@@ -168,7 +168,7 @@ class RedactingFormatter(logging.Formatter):
         record.msg = filter_datum(
             self.fields, self.REDACTION, record.msg, self.SEPARATOR
         )
-        return super().format(record)
+        return super(RedactingFormatter, self).format(record)
 
 
 if __name__ == "__main__":
