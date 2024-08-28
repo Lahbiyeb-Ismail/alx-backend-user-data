@@ -98,10 +98,54 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
     database = environ.get("PERSONAL_DATA_DB_NAME")
 
-    conn = mysql.connector.connection.MySQLConnection(
+    return mysql.connector.connection.MySQLConnection(
         user=user, password=password, host=host, database=database
     )
-    return conn
+
+
+def main() -> None:
+    """
+    Retrieves user data from the database and logs it using the info_logger.
+
+    This function performs the following steps:
+    1. Defines the fields to retrieve from the database.
+    2. Splits the fields into a list of columns.
+    3. Constructs a SQL query to select the specified fields
+    from the 'users' table.
+    4. Retrieves the info_logger.
+    5. Retrieves the database connection.
+    6. Executes the query and fetches all rows from the result.
+    7. Iterates over each row and constructs a log message.
+    8. Creates a log record using the log message and logs
+    it using the info_logger.
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
+
+    fields = "name,email,phone,ssn,password,ip,last_login,user_agent"
+    columns = fields.split(",")
+
+    query = "SELECT {} FROM users;".format(fields)
+    info_logger = get_logger()
+
+    connection = get_db()
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            record = map(
+                lambda x: "{}={}".format(x[0], x[1]),
+                zip(columns, row),
+            )
+            msg = "{};".format("; ".join(list(record)))
+            args = ("user_data", logging.INFO, None, None, msg, None, None)
+            log_record = logging.LogRecord(*args)
+            info_logger.handle(log_record)
 
 
 class RedactingFormatter(logging.Formatter):
@@ -123,3 +167,7 @@ class RedactingFormatter(logging.Formatter):
             self.fields, self.REDACTION, record.msg, self.SEPARATOR
         )
         return super().format(record)
+
+
+if __name__ == "__main__":
+    main()
