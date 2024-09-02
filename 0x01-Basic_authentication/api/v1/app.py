@@ -9,6 +9,7 @@ from flask import Flask, abort, jsonify, request
 from flask_cors import CORS, cross_origin
 
 from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth
 from api.v1.views import app_views
 
 app = Flask(__name__)
@@ -17,12 +18,21 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 if getenv("AUTH_TYPE") == "auth":
     auth = Auth()
-else:
-    auth = None
+if getenv("AUTH_TYPE") == "basic_auth":
+    auth = BasicAuth()
 
 
 @app.before_request
 def filtering_request():
+    """
+    Filter the incoming request based on authentication and authorization.
+
+    Returns:
+        None: If the authentication is not required for the requested path.
+        None: If the authentication is required but not provided.
+        None: If the authentication is provided but the user is not authorized.
+    """
+
     if auth is None:
         return
 
