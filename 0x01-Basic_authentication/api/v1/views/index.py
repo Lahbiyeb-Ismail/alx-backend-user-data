@@ -36,3 +36,11 @@ def unauthorized():
     Function to handle unauthorized access.
     """
     abort(401)
+
+
+@app_views.route("/forbidden", strict_slashes=False)
+def forbidden():
+    """
+    Function to handle forbidden access.
+    """
+    abort(403)
