@@ -54,6 +54,20 @@ class BasicAuth(Auth):
             return None
 
     def extract_user_credentials(self, decAuth_header: str) -> Tuple[str, str]:
+        """
+        Extracts the user credentials from the decoded Authorization header.
+
+        Args:
+          decAuth_header (str): The decoded Authorization header.
+
+        Returns:
+          Tuple[str, str]: A tuple containing the email and password extracted from the header.
+
+        Raises:
+          None
+
+        """
+
         if (
             not decAuth_header
             or not isinstance(decAuth_header, str)
