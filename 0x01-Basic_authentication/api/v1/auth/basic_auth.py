@@ -77,8 +77,7 @@ class BasicAuth(Auth):
         ):
             return None, None
 
-        email = decAuth_header.split(":")[0]
-        password = decAuth_header.split(":")[1]
+        email, password = decAuth_header.split(":", 1)
 
         return email, password
 
