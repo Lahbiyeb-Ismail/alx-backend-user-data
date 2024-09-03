@@ -3,6 +3,7 @@
 """Basic auth"""
 
 import base64
+from typing import Tuple
 
 from api.v1.auth.auth import Auth
 
@@ -51,3 +52,16 @@ class BasicAuth(Auth):
             return decoded_bytes.decode("utf-8")
         except Exception:
             return None
+
+    def extract_user_credentials(self, decAuth_header: str) -> Tuple[str, str]:
+        if (
+            not decAuth_header
+            or not isinstance(decAuth_header, str)
+            or not decAuth_header.__contains__(":")
+        ):
+            return None, None
+
+        email = decAuth_header.split(":")[0]
+        password = decAuth_header.split(":")[1]
+
+        return email, password
