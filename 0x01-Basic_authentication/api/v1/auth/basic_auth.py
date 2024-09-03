@@ -61,7 +61,8 @@ class BasicAuth(Auth):
           decAuth_header (str): The decoded Authorization header.
 
         Returns:
-          Tuple[str, str]: A tuple containing the email and password extracted from the header.
+          Tuple[str, str]: A tuple containing the email
+          and password extracted from the header.
 
         Raises:
           None
