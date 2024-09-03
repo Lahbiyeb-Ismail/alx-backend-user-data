@@ -15,14 +15,14 @@ from api.v1.views import app_views
 app = Flask(__name__)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+auth = None
 
+AUTH_TYPE = getenv("AUTH_TYPE")
 
-if getenv("AUTH_TYPE") == "auth":
+if AUTH_TYPE == "auth":
     auth = Auth()
-if getenv("AUTH_TYPE") == "basic_auth":
+if AUTH_TYPE == "basic_auth":
     auth = BasicAuth()
-else:
-    auth = None
 
 
 @app.before_request
@@ -41,12 +41,11 @@ def filtering_request():
 
     paths = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
 
-    if not auth.require_auth(request.path, paths):
-        return
-    if auth.authorization_header(request) is None:
-        abort(401)
-    if auth.current_user(request) is None:
-        abort(403)
+    if auth.require_auth(request.path, paths):
+        if auth.authorization_header(request) is None:
+            abort(401)
+        if auth.current_user(request) is None:
+            abort(403)
 
 
 @app.errorhandler(404)
