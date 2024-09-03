@@ -36,9 +36,9 @@ def filtering_request():
     if auth is None:
         return
 
-    request_list = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
+    paths = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
 
-    if not auth.require_auth(request.path, request_list):
+    if not auth.require_auth(request.path, paths):
         return
     if auth.authorization_header(request) is None:
         abort(401)
