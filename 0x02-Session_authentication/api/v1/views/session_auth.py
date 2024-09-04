@@ -11,7 +11,7 @@ from models.user import User
 
 
 @app_views.route("/auth_session/login", methods=["POST"], strict_slashes=False)
-def auth_login() -> str:
+def login_auth() -> str:
     """
     Authenticates a user login by checking the provided email and password.
 
@@ -48,3 +48,25 @@ def auth_login() -> str:
         res.set_cookie(cookies, session_id)
 
         return res
+
+
+@app_views.route("/auth_session/logout", methods=["DELETE"], strict_slashes=False)
+def logout_auth() -> str:
+    """
+    Logout the authenticated user by destroying the session.
+
+    Returns:
+      str: The JSON response with an empty dictionary
+      and status code 200.
+
+    Raises:
+      404: If the session cannot be destroyed.
+
+    """
+
+    from api.v1.auth import auth
+
+    if not auth.destroy_session(request):
+        return False, abort(404)
+
+    return jsonify({}), 200
