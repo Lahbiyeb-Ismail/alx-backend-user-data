@@ -38,23 +38,21 @@ def filtering_request():
         None: If the authentication is required but not provided.
         None: If the authentication is provided but the user is not authorized.
     """
-
     if auth is None:
         return
 
-    paths = [
+    excluded_paths = [
         "/api/v1/status/",
         "/api/v1/unauthorized/",
         "/api/v1/forbidden/",
         "/api/v1/auth_session/login/",
     ]
-
-    if auth.require_auth(request.path, paths):
+    if auth.require_auth(request.path, excluded_paths):
         cookie = auth.session_cookie(request)
         if not auth.authorization_header(request) and not cookie:
-            abort(401)
+            return None, abort(401)
         if auth.current_user(request) is None:
-            abort(403)
+            return None, abort(403)
 
     setattr(request, "current_user", auth.current_user(request))
 
