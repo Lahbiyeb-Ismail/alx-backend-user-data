@@ -5,9 +5,12 @@
 Class that provides authentication and authorization functionality
 """
 
+from os import getenv
 from typing import List, TypeVar
 
 from flask import request
+
+SESSION_NAME = getenv("SESSION_NAME")
 
 
 class Auth:
@@ -56,3 +59,21 @@ class Auth:
         Retrieves the current user from the request.
         """
         return None
+
+    def session_cookie(self, request=None):
+        """
+        Retrieves the session cookie from the request.
+
+        Args:
+            request (Request): The request object.
+
+        Returns:
+            str: The value of the session cookie, or None if
+            the request is None.
+        """
+
+        if request is None:
+            return None
+
+        session_cookie = request.cookies.get(SESSION_NAME)
+        return session_cookie
