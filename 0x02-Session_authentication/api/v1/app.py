@@ -42,21 +42,21 @@ def filtering_request():
     if auth is None:
         return
 
-    paths = ["/api/v1/status/", "/api/v1/unauthorized/", "/api/v1/forbidden/"]
+    paths = [
+        "/api/v1/status/",
+        "/api/v1/unauthorized/",
+        "/api/v1/forbidden/",
+        "/api/v1/auth_session/login/",
+    ]
 
     if auth.require_auth(request.path, paths):
-        if auth.authorization_header(request) is None:
+        cookie = auth.session_cookie(request)
+        if not auth.authorization_header(request) and not cookie:
             abort(401)
         if auth.current_user(request) is None:
             abort(403)
 
     setattr(request, "current_user", auth.current_user(request))
-
-
-@app.errorhandler(404)
-def not_found(error) -> str:
-    """Not found handler"""
-    return jsonify({"error": "Not found"}), 404
 
 
 @app.errorhandler(401)
@@ -69,6 +69,12 @@ def unauthorized(error) -> str:
 def forbidden(error) -> str:
     """Forbidden handler"""
     return jsonify({"error": "Forbidden"}), 403
+
+
+@app.errorhandler(404)
+def not_found(error) -> str:
+    """Not found handler"""
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == "__main__":
