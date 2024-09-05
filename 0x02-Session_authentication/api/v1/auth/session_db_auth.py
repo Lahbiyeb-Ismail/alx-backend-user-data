@@ -2,7 +2,10 @@
 
 """SessionDBAuth class"""
 
+from datetime import datetime, timedelta
+
 from api.v1.auth.session_exp_auth import SessionExpAuth
+from models.user_session import UserSession
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -18,7 +21,16 @@ class SessionDBAuth(SessionExpAuth):
         Returns:
           str: The session ID.
         """
-        return super().create_session(user_id)
+        if not user_id or not isinstance(user_id, str):
+            return None
+
+        session_id = super().create_session(user_id)
+
+        session_dictionary = {"user_id": user_id, "session_id": session_id}
+        user_session = UserSession(**session_dictionary)
+
+        user_session.save()
+        return session_id
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
         """
@@ -30,7 +42,21 @@ class SessionDBAuth(SessionExpAuth):
         Returns:
           str: The user ID associated with the session ID.
         """
-        return super().user_id_for_session_id(session_id)
+        try:
+            sessions_list = UserSession.search({"session_id": session_id})
+        except Exception:
+            return None
+
+        if not sessions_list or not len(sessions_list):
+            return None
+
+        curr_time = datetime.now()
+        session_dur = timedelta(seconds=self.session_duration)
+        session_exp = sessions_list[0].created_at + session_dur
+        if session_exp < curr_time:
+            return None
+
+        return sessions_list[0].user_id
 
     def destroy_session(self, request=None):
         """
@@ -42,4 +68,18 @@ class SessionDBAuth(SessionExpAuth):
         Returns:
           None
         """
-        return super().destroy_session(request)
+        if not request:
+            return False
+
+        session_id = self.session_cookie(request)
+
+        if not session_id:
+            return False
+
+        sessions_list = UserSession.search({"session_id": session_id})
+
+        if not sessions_list or not len(sessions_list):
+            return False
+
+        sessions_list[0].remove()
+        return True
