@@ -67,7 +67,7 @@ def logout_auth() -> str:
 
     """
 
-    from api.v1.auth import auth
+    from api.v1.app import auth
 
     if not auth.destroy_session(request):
         return False, abort(404)
