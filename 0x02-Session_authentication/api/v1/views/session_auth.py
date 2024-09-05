@@ -50,7 +50,10 @@ def login_auth() -> str:
         return res
 
 
-@app_views.route("/auth_session/logout", methods=["DELETE"], strict_slashes=False)
+logout_route = "/auth_session/logout"
+
+
+@app_views.route(logout_route, methods=["DELETE"], strict_slashes=False)
 def logout_auth() -> str:
     """
     Logout the authenticated user by destroying the session.
