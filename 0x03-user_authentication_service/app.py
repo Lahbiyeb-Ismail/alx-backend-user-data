@@ -4,17 +4,47 @@
 basic Flask app set up
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+
+from auth import Auth
 
 app = Flask(__name__)
+AUTH = Auth()
 
 
-@app.route("/")
+@app.route("/", strict_slashes=False)
 def home_route():
     """
     Returns a JSON response with a welcome message.
     """
     return jsonify({"message": "Bienvennue"})
+
+
+@app.route("/users", methods=["POST"], strict_slashes=False)
+def users():
+    """
+    This function registers a new user by accepting the
+    email and password from the request form.
+    It calls the `register_user` function from the `AUTH`
+    module to register the user.
+    If the user is successfully registered, it returns a
+    JSON response with the email and a success message.
+    If the email is already registered, it returns a JSON
+    response with an error message and a status code of 400.
+
+    Returns:
+      A JSON response containing the email and a success
+      message if the user is successfully registered.
+      A JSON response containing an error message and a status
+      code of 400 if the email is already registered.
+    """
+    email = request.form.get("email")
+    password = request.form.get("password")
+    try:
+        AUTH.register_user(email, password)
+        return jsonify({"email": email, "message": "user created"})
+    except ValueError:
+        return jsonify({"message": "email already registered"}), 400
 
 
 if __name__ == "__main__":
