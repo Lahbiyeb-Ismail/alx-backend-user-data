@@ -98,5 +98,28 @@ def logout():
         abort(403)
 
 
+@app.route("/profile", strict_slashes=False)
+def profile():
+    """
+    Retrieves the user's profile information.
+
+    Returns:
+      A JSON response containing the user's email.
+
+    Raises:
+      HTTPException: If the user is not authenticated
+      (403 Forbidden).
+    """
+
+    session_id = request.cookies.get("session_id")
+
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if not user:
+        abort(403)
+
+    return jsonify({"email": user.email}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
