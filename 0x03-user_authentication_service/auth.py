@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from uuid import uuid4
+
 import bcrypt
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -19,6 +21,16 @@ def _hash_password(password: str) -> bytes:
 
     """
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+
+def _generate_uuid():
+    """
+    Generates a UUID (Universally Unique Identifier) as a string.
+
+    Returns:
+        str: A string representation of the generated UUID.
+    """
+    return str(uuid4())
 
 
 class Auth:
