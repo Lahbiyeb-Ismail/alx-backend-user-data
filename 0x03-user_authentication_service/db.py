@@ -56,3 +56,31 @@ class DB:
         except InvalidRequestError:
             raise InvalidRequestError()
         return user
+
+    def update_user(self, user_id, **kwargs) -> None:
+        """
+        Update the user with the given user_id using
+        the provided keyword arguments.
+
+        Args:
+          user_id (int): The ID of the user to be updated.
+          **kwargs: Keyword arguments representing the
+          fields to be updated and their new values.
+
+        Raises:
+          ValueError: If the provided field name does not
+          exist in the user object.
+
+        Returns:
+          None
+        """
+
+        user = self.find_user_by(id=user_id)
+
+        for key, val in kwargs.items():
+            if not hasattr(user, key):
+                raise ValueError()
+
+            setattr(user, key, val)
+
+        self._session.commit()
