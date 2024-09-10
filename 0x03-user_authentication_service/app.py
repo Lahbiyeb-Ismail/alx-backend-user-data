@@ -13,12 +13,12 @@ app = Flask(__name__)
 AUTH = Auth()
 
 
-@app.route("/", strict_slashes=False)
+@app.route("/", methods=["GET"], strict_slashes=False)
 def home_route():
     """
     Returns a JSON response with a welcome message.
     """
-    return jsonify({"message": "Bienvennue"})
+    return jsonify({"message": "Bienvenue"})
 
 
 @app.route("/users", methods=["POST"], strict_slashes=False)
