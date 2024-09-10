@@ -79,11 +79,13 @@ class DB:
         if not user:
             return
 
+        # update_dict = {}
+
         for key, val in kwargs.items():
             if not hasattr(user, key):
                 raise ValueError()
 
-            setattr(user, key, val)
+            setattr(User, key, val)
 
         self._session.commit()
         return None
