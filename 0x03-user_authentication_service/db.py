@@ -74,7 +74,6 @@ class DB:
         Returns:
           None
         """
-
         user = self.find_user_by(id=user_id)
 
         for key, val in kwargs.items():
@@ -84,3 +83,4 @@ class DB:
             setattr(user, key, val)
 
         self._session.commit()
+        return None
