@@ -180,10 +180,12 @@ class Auth:
         except NoResultFound:
             user = None
 
-        if user is not None:
-            new_hashed_pwd = _hash_password(password)
-            self._db.update_user(
-                user.id, hashed_password=new_hashed_pwd, reset_token=None
-            )
+        if user is None:
+            raise ValueError()
 
-        raise ValueError()
+        new_hashed_pwd = _hash_password(password)
+        self._db.update_user(
+            user.id,
+            hashed_password=new_hashed_pwd,
+            reset_token=None,
+        )
