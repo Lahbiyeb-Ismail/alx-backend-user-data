@@ -180,8 +180,7 @@ class Auth:
             raise ValueError()
         else:
             new_hashed_pwd = _hash_password(password)
-            self._db.update_user(
-                user.id,
-                hashed_password=new_hashed_pwd,
-                reset_token=None,
-            )
+            user.hashed_password = new_hashed_pwd
+            user.reset_token = None
+
+            return None
