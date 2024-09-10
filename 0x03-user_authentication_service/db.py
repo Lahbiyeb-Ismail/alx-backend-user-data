@@ -57,7 +57,7 @@ class DB:
             raise InvalidRequestError()
         return user
 
-    def update_user(self, user_id, **kwargs) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
         Update the user with the given user_id using
         the provided keyword arguments.
@@ -79,16 +79,11 @@ class DB:
         if not user:
             return
 
-        update_dict = {}
-
         for key, val in kwargs.items():
             if not hasattr(user, key):
                 raise ValueError()
 
-            update_dict[getattr(User, key)] = val
+            setattr(user, key, val)
 
-        self._session.query(User).filter(User.id == user_id).update(
-            update_dict, synchronize_session=False
-        )
         self._session.commit()
         return None
