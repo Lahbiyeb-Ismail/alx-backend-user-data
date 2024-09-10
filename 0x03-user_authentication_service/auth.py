@@ -174,18 +174,14 @@ class Auth:
         Raises:
             ValueError: If no user is found with the given reset token.
         """
-        user = None
         try:
             user = self._db.find_user_by(reset_token=reset_token)
         except NoResultFound:
-            user = None
-
-        if user is None:
             raise ValueError()
-
-        new_hashed_pwd = _hash_password(password)
-        self._db.update_user(
-            user.id,
-            hashed_password=new_hashed_pwd,
-            reset_token=None,
-        )
+        else:
+            new_hashed_pwd = _hash_password(password)
+            self._db.update_user(
+                user.id,
+                hashed_password=new_hashed_pwd,
+                reset_token=None,
+            )
