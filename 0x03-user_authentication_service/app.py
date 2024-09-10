@@ -90,12 +90,13 @@ def logout():
 
     session_id = request.cookies.get("session_id")
 
-    try:
-        user = AUTH.get_user_from_session_id(session_id)
-        AUTH.destroy_session(user.user_id)
-        redirect("/")
-    except NoResultFound:
+    user = AUTH.get_user_from_session_id(session_id)
+
+    if not user:
         abort(403)
+
+    AUTH.destroy_session(user.user_id)
+    redirect("/")
 
 
 @app.route("/profile", strict_slashes=False)
