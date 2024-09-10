@@ -163,7 +163,7 @@ class Auth:
         except NoResultFound:
             raise ValueError()
 
-    def upadate_password(self, reset_token: str, password: str) -> None:
+    def update_password(self, reset_token: str, password: str) -> None:
         """
         Updates the password for a user using the provided reset token.
 
@@ -180,7 +180,7 @@ class Auth:
             new_hashed_pwd = _hash_password(password)
 
             self._db.update_user(
-                user.user_id, hashed_password=new_hashed_pwd, reset_token=None
+                user.id, hashed_password=new_hashed_pwd, reset_token=None
             )
         except NoResultFound:
             raise ValueError()
