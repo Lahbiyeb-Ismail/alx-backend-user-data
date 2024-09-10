@@ -84,6 +84,9 @@ class DB:
         Returns:
           None
         """
+        if not user_id:
+            return
+
         user = self.find_user_by(id=user_id)
 
         for key, val in kwargs.items():
