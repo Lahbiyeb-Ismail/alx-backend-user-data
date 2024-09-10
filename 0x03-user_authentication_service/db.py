@@ -79,13 +79,16 @@ class DB:
         if not user:
             return
 
-        # update_dict = {}
+        update_dict = {}
 
         for key, val in kwargs.items():
             if not hasattr(user, key):
                 raise ValueError()
 
-            setattr(User, key, val)
+            update_dict[getattr(User, key)] = val
 
+        self._session.query(User).filter(User.id == user_id).update(
+            update_dict, synchronize_session=False
+        )
         self._session.commit()
         return None
