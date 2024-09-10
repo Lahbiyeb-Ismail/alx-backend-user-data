@@ -76,7 +76,7 @@ def login():
 
 
 @app.route("/sessions", methods=["DELETE"], strict_slashes=False)
-def logout():
+def logout() -> str:
     """
     Logs out the user by destroying the session associated
     with the user's session ID.
@@ -96,7 +96,7 @@ def logout():
         abort(403)
 
     AUTH.destroy_session(user.user_id)
-    redirect("/")
+    return redirect("/")
 
 
 @app.route("/profile", strict_slashes=False)
